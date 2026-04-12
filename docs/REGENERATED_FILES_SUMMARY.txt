@@ -1,0 +1,83 @@
+================================================================================
+REGENERATED CLEAN DATA FILES - SUMMARY
+================================================================================
+
+Date: April 12, 2026
+Status: ✅ READY FOR UPLOAD
+
+================================================================================
+CHANGES MADE
+================================================================================
+
+Book1 (DummyData_Book1_Generated.xlsx):
+  ✓ No changes needed - already clean
+
+Book2 (DummyData_Book2_Generated.xlsx):
+  ✓ Lapse sheet: Changed integer columns (1, 2, 3...) to strings (Year_1, Year_2, Year_3...)
+  ✓ All column names are now strings
+  ✓ No integer column names
+
+Book3 (DummyData_Book3_Generated.xlsx):
+  ✓ Removed header rows with None values
+  ✓ All trend sheets: Changed integer years (1990, 1991...) to strings (Y1990, Y1991...)
+  ✓ Incidence sheets: Changed integer durations to strings (Week_0, Week_1...)
+  ✓ Termination sheets: Changed integer months to strings (Month_1, Month_2...)
+  ✓ All column names are now strings
+  ✓ No None values anywhere
+
+================================================================================
+NEW COLUMN NAME FORMATS
+================================================================================
+
+Lapse Sheet (Book2):
+  OLD: Lapse_Class, 1, 2, 3, 4, 5... 30
+  NEW: Lapse_Class, Year_1, Year_2, Year_3, Year_4, Year_5... Year_30
+
+Trend Tables (Book3):
+  OLD: Age, 1990, 1991, 1992... 2060
+  NEW: Age, Y1990, Y1991, Y1992... Y2060
+
+Incidence Tables (Book3):
+  OLD: Age, 0, 1, 4, 8, 13, 26, 52, 104, 156
+  NEW: Age, Week_0, Week_1, Week_4, Week_8, Week_13, Week_26, Week_52, Week_104, Week_156
+
+Termination Tables (Book3):
+  OLD: Age, 1, 2, 3... 120
+  NEW: Age, Month_1, Month_2, Month_3... Month_120
+
+================================================================================
+TESTING RESULTS
+================================================================================
+
+✅ Book2: Successfully loaded and indexed
+✅ Book3: Successfully loaded and indexed
+✅ All string conversions working correctly
+✅ No more "sequence item 1: expected str instance, int found" errors
+✅ No more broken pipe errors
+✅ All metadata properly serialized
+
+================================================================================
+FILE STATISTICS
+================================================================================
+
+Book1:
+  - Files: 1
+  - Sheets: 3
+  - Total rows: 206 (TTYPlanMap: 150, Class: 150, Sheet3: 6)
+
+Book2:
+  - Files: 1
+  - Sheets: 3
+  - Total rows: 61 (Mort: 25, Lapse: 24, IMRB: 12)
+
+Book3:
+  - Files: 1
+  - Sheets: 21
+  - Total rows: 2,520 (120 rows × 21 sheets)
+
+================================================================================
+READY TO UPLOAD AT: http://localhost:8501
+================================================================================
+
+All three files are now compatible with the chatbot upload system!
+
