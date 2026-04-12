@@ -47,7 +47,7 @@ class MultiProviderLLM:
         """Get default model for the provider."""
         defaults = {
             "anthropic": "claude-sonnet-4-20250514",
-            "gemini": "gemini-2.0-flash-exp",
+            "gemini": "gemini-2.0-flash-exp-01-21",
             "openai": "gpt-4o"
         }
         return defaults.get(self.provider, "claude-sonnet-4-20250514")
@@ -182,11 +182,11 @@ class MultiProviderLLM:
             "gemini": {
                 "name": "Google Gemini",
                 "models": [
-                    "gemini-2.0-flash-exp",
-                    "gemini-1.5-pro",
-                    "gemini-1.5-flash"
+                    "gemini-2.0-flash-exp-01-21",
+                    "gemini-exp-1206",
+                    "gemini-2.0-flash-thinking-exp-01-21"
                 ],
-                "default": "gemini-2.0-flash-exp",
+                "default": "gemini-2.0-flash-exp-01-21",
                 "api_key_url": "https://aistudio.google.com/apikey",
                 "supports_base_url": False
             },
