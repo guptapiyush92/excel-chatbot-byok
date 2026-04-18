@@ -570,6 +570,7 @@
                     <label>AI Provider</label>
                     <select id="provider">
                         <option value="openai">🟦 OpenAI GPT</option>
+                        <option value="openrouter">🔀 OpenRouter (Multi-Model)</option>
                         <option value="anthropic">🔷 Anthropic Claude</option>
                         <option value="gemini">🟢 Google Gemini</option>
                     </select>
@@ -645,6 +646,11 @@
                                 <p style="font-size: 13px; color: #666;"><strong>Recommended</strong> - Free $5 credits</p>
                                 <p style="font-size: 11px; color: #10a37f; margin-top: 5px;">Get API key: platform.openai.com</p>
                             </div>
+                            <div class="provider-card" style="border: 2px solid #9333ea; background: #faf5ff;">
+                                <h3>🔀 OpenRouter</h3>
+                                <p style="font-size: 13px; color: #666;"><strong>Multi-Model Access</strong></p>
+                                <p style="font-size: 11px; color: #9333ea; margin-top: 5px;">Get key: openrouter.ai</p>
+                            </div>
                             <div class="provider-card">
                                 <h3>🔷 Claude</h3>
                                 <p style="font-size: 13px; color: #666;">Fast and accurate analysis</p>
@@ -695,6 +701,12 @@
             openai: [
                 { value: 'gpt-4o', label: 'GPT-4o' },
                 { value: 'gpt-4-turbo', label: 'GPT-4 Turbo' }
+            ],
+            openrouter: [
+                { value: 'openai/gpt-4o', label: 'GPT-4o (via OpenRouter)' },
+                { value: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet' },
+                { value: 'google/gemini-pro-1.5', label: 'Gemini Pro 1.5' },
+                { value: 'meta-llama/llama-3.1-70b-instruct', label: 'Llama 3.1 70B' }
             ]
         };
 
@@ -728,14 +740,19 @@
             const apiKey = document.getElementById('apiKey').value;
             const model = document.getElementById('model').value;
             const useCustomUrl = document.getElementById('useCustomUrl').checked;
-            const baseUrl = useCustomUrl ? document.getElementById('baseUrl').value : null;
+            let baseUrl = useCustomUrl ? document.getElementById('baseUrl').value : null;
+
+            // Auto-set base URL for OpenRouter
+            if (provider === 'openrouter') {
+                baseUrl = 'https://openrouter.ai/api/v1';
+            }
 
             if (!apiKey) {
                 showStatus('aiStatus', 'Please enter an API key', 'error');
                 return;
             }
 
-            if (useCustomUrl && !baseUrl) {
+            if (useCustomUrl && !baseUrl && provider !== 'openrouter') {
                 showStatus('aiStatus', 'Please enter a base URL', 'error');
                 return;
             }
@@ -745,7 +762,11 @@
             btn.innerHTML = '<span class="loading"></span>';
 
             try {
-                const payload = { provider, api_key: apiKey, model };
+                const payload = {
+                    provider: provider === 'openrouter' ? 'openai' : provider,  // OpenRouter uses OpenAI-compatible API
+                    api_key: apiKey,
+                    model
+                };
                 if (baseUrl) {
                     payload.base_url = baseUrl;
                 }
