@@ -244,12 +244,15 @@ async def query_data(request: QueryRequest):
         # Search vector store
         results = session["vector_store"].search(request.query, n_results=5)
 
-        # Build context
+        # Build context - handle both enabled and disabled vector store
         context_parts = []
-        for doc, metadata in zip(results['documents'], results['metadatas']):
-            context_parts.append(f"From {metadata['file']} - {metadata['sheet']}:\n{doc}\n")
+        if 'documents' in results and 'metadatas' in results:
+            # VectorStore enabled - has documents and metadatas
+            for doc, metadata in zip(results['documents'], results['metadatas']):
+                context_parts.append(f"From {metadata['file']} - {metadata['sheet']}:\n{doc}\n")
+        # else: VectorStore disabled - results only has 'results' and 'query', no context available
 
-        context = "\n".join(context_parts)
+        context = "\n".join(context_parts) if context_parts else "No semantic search context available (searching across all data)."
 
         # Build schema info
         schema_info = []
