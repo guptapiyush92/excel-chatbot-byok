@@ -849,12 +849,17 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    loadingMsg.querySelector('.message-content').textContent = data.answer;
+                    // Remove the loading message
+                    loadingMsg.remove();
+
+                    // Add the actual response with markdown rendering
+                    addMessage('assistant', data.answer);
                 } else {
                     throw new Error(data.detail || 'Query failed');
                 }
             } catch (error) {
-                loadingMsg.querySelector('.message-content').textContent = `Error: ${error.message}`;
+                loadingMsg.remove();
+                addMessage('assistant', `Error: ${error.message}`);
             } finally {
                 input.disabled = false;
                 document.getElementById('sendBtn').disabled = false;
