@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: excel-chatbot
+  labels:
+    app: excel-chatbot
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: excel-chatbot
+  template:
+    metadata:
+      labels:
+        app: excel-chatbot
+    spec:
+      containers:
+      - name: excel-chatbot
+        image: your-registry/excel-chatbot:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: API_HOST
+          value: "0.0.0.0"
+        - name: API_PORT
+          value: "8000"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: excel-chatbot-service
+spec:
+  selector:
+    app: excel-chatbot
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: excel-chatbot-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: excel-chatbot.yourcompany.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: excel-chatbot-service
+            port:
+              number: 80
