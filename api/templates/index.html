@@ -395,6 +395,17 @@
                         <option value="claude-sonnet-4-20250514">Claude Sonnet 4</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <input type="checkbox" id="useCustomUrl" style="width: auto; margin-right: 8px;">
+                    <label for="useCustomUrl" style="display: inline; cursor: pointer;">Use Custom Base URL (for proxy)</label>
+                </div>
+                <div class="form-group hidden" id="baseUrlGroup">
+                    <label>Base URL</label>
+                    <input type="text" id="baseUrl" placeholder="http://localhost:8080/v1">
+                    <small style="display: block; color: #666; font-size: 11px; margin-top: 5px;">
+                        For corporate proxies or local endpoints
+                    </small>
+                </div>
                 <button class="btn btn-primary" id="initAI">🚀 Initialize AI</button>
                 <div id="aiStatus"></div>
             </div>
@@ -511,14 +522,31 @@
             });
         });
 
+        // Toggle custom URL field
+        document.getElementById('useCustomUrl').addEventListener('change', (e) => {
+            const baseUrlGroup = document.getElementById('baseUrlGroup');
+            if (e.target.checked) {
+                baseUrlGroup.classList.remove('hidden');
+            } else {
+                baseUrlGroup.classList.add('hidden');
+            }
+        });
+
         // Initialize AI
         document.getElementById('initAI').addEventListener('click', async () => {
             const provider = document.getElementById('provider').value;
             const apiKey = document.getElementById('apiKey').value;
             const model = document.getElementById('model').value;
+            const useCustomUrl = document.getElementById('useCustomUrl').checked;
+            const baseUrl = useCustomUrl ? document.getElementById('baseUrl').value : null;
 
             if (!apiKey) {
                 showStatus('aiStatus', 'Please enter an API key', 'error');
+                return;
+            }
+
+            if (useCustomUrl && !baseUrl) {
+                showStatus('aiStatus', 'Please enter a base URL', 'error');
                 return;
             }
 
@@ -527,10 +555,15 @@
             btn.innerHTML = '<span class="loading"></span>';
 
             try {
+                const payload = { provider, api_key: apiKey, model };
+                if (baseUrl) {
+                    payload.base_url = baseUrl;
+                }
+
                 const response = await fetch(`${API_BASE}/initialize`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ provider, api_key: apiKey, model })
+                    body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
