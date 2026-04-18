@@ -76,6 +76,14 @@ async def root():
         return HTMLResponse(content=html_file.read_text())
     return HTMLResponse(content="<h1>Excel Chatbot API</h1><p>Access /docs for API documentation</p>")
 
+@app.get("/test-markdown", response_class=HTMLResponse)
+async def test_markdown():
+    """Test page for markdown rendering"""
+    html_file = Path(__file__).parent / "templates" / "test_markdown.html"
+    if html_file.exists():
+        return HTMLResponse(content=html_file.read_text())
+    return HTMLResponse(content="<h1>Test page not found</h1>")
+
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint"""

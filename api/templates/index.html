@@ -915,19 +915,33 @@
         }
 
         // Configure marked.js for better rendering
-        marked.setOptions({
-            breaks: true,
-            gfm: true,
-            tables: true,
-            sanitize: false,
-            highlight: function(code, lang) {
-                if (lang && hljs.getLanguage(lang)) {
-                    try {
-                        return hljs.highlight(code, { language: lang }).value;
-                    } catch (err) {}
-                }
-                return hljs.highlightAuto(code).value;
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded');
+            console.log('Marked available:', typeof marked !== 'undefined');
+            console.log('Highlight.js available:', typeof hljs !== 'undefined');
+
+            if (typeof marked === 'undefined') {
+                console.error('Marked.js not loaded!');
+                return;
             }
+
+            marked.setOptions({
+                breaks: true,
+                gfm: true,
+                tables: true,
+                sanitize: false,
+                highlight: function(code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        try {
+                            return hljs.highlight(code, { language: lang }).value;
+                        } catch (err) {
+                            console.error('Highlight error:', err);
+                        }
+                    }
+                    return hljs.highlightAuto(code).value;
+                }
+            });
+            console.log('Marked.js configured successfully');
         });
 
         function addMessage(role, content) {
@@ -935,23 +949,40 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
 
-            // Render markdown for assistant messages, plain text for user
-            const renderedContent = role === 'assistant' ? marked.parse(content) : escapeHtml(content);
+            try {
+                // Render markdown for assistant messages, plain text for user
+                let renderedContent;
+                if (role === 'assistant') {
+                    console.log('Rendering markdown for:', content.substring(0, 50));
+                    renderedContent = marked.parse(content);
+                    console.log('Rendered HTML:', renderedContent.substring(0, 100));
+                } else {
+                    renderedContent = escapeHtml(content);
+                }
 
-            messageDiv.innerHTML = `
-                <div class="message-content">${renderedContent}</div>
-            `;
-            messagesDiv.appendChild(messageDiv);
+                messageDiv.innerHTML = `
+                    <div class="message-content">${renderedContent}</div>
+                `;
+                messagesDiv.appendChild(messageDiv);
 
-            // Highlight code blocks after rendering
-            if (role === 'assistant') {
-                messageDiv.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightElement(block);
-                });
+                // Highlight code blocks after rendering
+                if (role === 'assistant') {
+                    messageDiv.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                }
+
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                return messageDiv;
+            } catch (error) {
+                console.error('Error adding message:', error);
+                messageDiv.innerHTML = `
+                    <div class="message-content">${escapeHtml(content)}</div>
+                `;
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                return messageDiv;
             }
-
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            return messageDiv;
         }
 
         function escapeHtml(text) {
