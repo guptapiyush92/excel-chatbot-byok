@@ -1,0 +1,14 @@
+---
+applications:
+- name: excel-chatbot
+  memory: 1G
+  instances: 1
+  buildpacks:
+    - python_buildpack
+  command: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+  env:
+    PYTHONUNBUFFERED: "1"
+    API_HOST: "0.0.0.0"
+  services: []
+  routes:
+    - route: excel-chatbot-${random-word}.cfapps.eu10.hana.ondemand.com
