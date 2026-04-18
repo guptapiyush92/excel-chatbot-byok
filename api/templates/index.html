@@ -30,7 +30,7 @@
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
             min-height: 600px;
             display: flex;
@@ -38,7 +38,9 @@
         }
 
         .sidebar {
-            width: 350px;
+            width: 380px;
+            min-width: 380px;
+            flex-shrink: 0;
             background: #f8f9fa;
             padding: 30px;
             border-right: 1px solid #e0e0e0;
@@ -47,6 +49,7 @@
 
         .main-content {
             flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             background: white;
