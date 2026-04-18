@@ -262,6 +262,14 @@ async def query_data(request: QueryRequest):
 Available Data:
 {schema_text}
 
+Response Formatting Guidelines:
+- Use **bold** for emphasis and important numbers
+- Use tables (markdown format) when presenting structured data
+- Use bullet points or numbered lists for multiple items
+- Use code blocks with ``` for formulas, SQL, or technical content
+- Use headings (##, ###) to organize longer responses
+- Be clear and well-formatted for readability
+
 Use the provided context to answer questions accurately. If you're not sure, say so."""
             },
             {
@@ -271,7 +279,7 @@ Use the provided context to answer questions accurately. If you're not sure, say
 
 Question: {request.query}
 
-Please provide a clear, helpful answer based on the data."""
+Please provide a clear, well-formatted answer based on the data. Use markdown formatting (tables, lists, bold text) to make your response easy to read."""
             }
         ]
 
