@@ -240,11 +240,15 @@ class VectorStore:
 
     def delete_collection(self) -> None:
         """Delete the current collection."""
+        if not self.enabled:
+            return
         self.client.delete_collection(name=self.collection_name)
         logger.info(f"Deleted collection: {self.collection_name}")
 
     def reset_collection(self) -> None:
         """Reset the collection by deleting and recreating it."""
+        if not self.enabled:
+            return
         try:
             self.delete_collection()
         except:
@@ -272,6 +276,10 @@ class VectorStoreManager:
         Args:
             documents: List of documents from ExcelDataLoader
         """
+        if not self.vector_store.enabled:
+            logger.info("Vector store disabled - skipping indexing")
+            return
+
         logger.info("Starting indexing process")
 
         # Reset collection for fresh start
@@ -299,6 +307,13 @@ class VectorStoreManager:
         Returns:
             Enhanced results with context
         """
+        if not self.vector_store.enabled:
+            return {
+                'query': query,
+                'num_results': 0,
+                'results': []
+            }
+
         results = self.vector_store.search(query, n_results)
 
         # Enhance results with additional context
