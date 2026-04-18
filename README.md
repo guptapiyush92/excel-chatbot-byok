@@ -8,27 +8,35 @@ A powerful chatbot system designed to query and analyze Excel datasets using nat
 
 **Have Python installed?** → [Quick Start Guide](QUICKSTART.md)
 
+**Corporate firewall blocking Streamlit?** → [FastAPI Version (No WebSocket!)](FASTAPI_DEPLOYMENT.md)
+
 **Ready to go?**
 ```bash
 bash quick_setup.sh        # macOS/Linux
 quick_setup.bat            # Windows
 ```
 
-Then run:
+Then choose your version:
 ```bash
+# Streamlit version (WebSocket-based)
 streamlit run ui/chatbot_byok_ui.py
+
+# FastAPI version (HTTP-only, corporate-friendly)
+bash run_api.sh            # macOS/Linux
+run_api.bat                # Windows
 ```
 
 ## Features
 
 - 🤖 **Multi-Provider Support**: Choose between Claude, Gemini, or GPT
 - 🔑 **BYOK Architecture**: Users provide their own API keys (zero cost to you!)
+- 🏢 **Corporate-Friendly**: FastAPI version with no WebSocket requirements
 - 📊 **Large Dataset Support**: Handles Excel files with 100,000+ rows efficiently
 - 🔍 **Semantic Search**: Uses vector embeddings for intelligent data retrieval
 - 💬 **Natural Language Queries**: Ask questions in plain English about your data
 - 📁 **Multi-file Analysis**: Upload and query multiple Excel files simultaneously
 - ⚡ **Fast Performance**: Optimized chunking and caching strategies
-- 🎨 **Interactive UI**: Simple web interface built with Streamlit
+- 🎨 **Two UI Options**: Streamlit (rapid) or FastAPI (firewall-friendly)
 
 ## Architecture
 
@@ -42,6 +50,7 @@ User Query → Claude API ← Context Retrieval ← Vector Search
 
 - 🚀 **[Quick Start Guide](QUICKSTART.md)** - Fast setup for experienced developers
 - 📖 **[Complete Setup Guide](SETUP_FROM_SCRATCH.md)** - Step-by-step for beginners (no Python/Git required)
+- 🏢 **[FastAPI Corporate Deployment](FASTAPI_DEPLOYMENT.md)** - WebSocket-free version for corporate firewalls
 - 🔄 **[Deployment Options](DEPLOYMENT_OPTIONS.md)** - BYOK vs Proxy mode comparison
 - 🌐 **[How to Run](HOW_TO_RUN.md)** - Detailed usage instructions
 
@@ -80,19 +89,36 @@ cp .env.example .env
 
 ## Usage
 
-### BYOK Mode (Recommended)
+### Option 1: Streamlit Version (WebSocket-based)
+
+**BYOK Mode (Recommended):**
 Users provide their own API keys through the UI:
 ```bash
 streamlit run ui/chatbot_byok_ui.py
 ```
 
-### Proxy Mode
+**Proxy Mode:**
 You provide the API key via `.env` file:
 ```bash
 streamlit run ui/chatbot_upload_ui.py
 ```
 
 Then open **http://localhost:8501** in your browser.
+
+### Option 2: FastAPI Version (Corporate-Friendly, No WebSocket)
+
+**Perfect for corporate environments with firewall restrictions:**
+```bash
+# macOS/Linux
+bash run_api.sh
+
+# Windows
+run_api.bat
+```
+
+Then open **http://localhost:8000** in your browser.
+
+**Key Difference:** FastAPI uses standard HTTP requests (no WebSocket), making it work perfectly behind corporate firewalls and proxies.
 
 ## 🎯 Use Cases
 
@@ -137,19 +163,32 @@ Then open **http://localhost:8501** in your browser.
 
 ## 🔧 Troubleshooting
 
-### Corporate Firewall Blocking Streamlit Cloud?
-**Solution**: Run locally! Follow the [Setup Guide](SETUP_FROM_SCRATCH.md) to run the app on your local machine, bypassing network restrictions.
+### Corporate Firewall Blocking WebSocket?
+**Solution 1**: Use the FastAPI version (no WebSocket required!)
+```bash
+bash run_api.sh  # or run_api.bat on Windows
+```
 
-### WebSocket Connection Errors?
-When running **locally**, WebSocket issues are eliminated since everything runs on your machine.
+**Solution 2**: Run Streamlit locally following the [Setup Guide](SETUP_FROM_SCRATCH.md)
+
+### Which Version Should I Use?
+
+| Scenario | Recommended Version |
+|----------|---------------------|
+| Behind corporate firewall | ✅ FastAPI (HTTP-only) |
+| Internal development | Streamlit (faster iteration) |
+| Public deployment | FastAPI (more control) |
+| Quick demo | Streamlit (easier setup) |
+| API integration needed | FastAPI (REST API) |
 
 ### Common Issues
 - **Python not found**: Make sure Python is installed and added to PATH
 - **Module not found**: Activate virtual environment first
-- **Port already in use**: Use `--server.port 8502` flag
+- **Port already in use**: Use different port (see docs)
 - **Memory errors**: Process smaller files or upgrade system RAM
+- **WebSocket errors**: Switch to FastAPI version
 
-See [SETUP_FROM_SCRATCH.md](SETUP_FROM_SCRATCH.md) for detailed troubleshooting.
+See [SETUP_FROM_SCRATCH.md](SETUP_FROM_SCRATCH.md) and [FASTAPI_DEPLOYMENT.md](FASTAPI_DEPLOYMENT.md) for detailed troubleshooting.
 
 ## License
 
