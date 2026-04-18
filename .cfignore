@@ -1,0 +1,51 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Database
+chroma_db/
+
+# Git
+.git/
+.gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files
+*.xlsx
+*.xls
+*.csv
+data/
+
+# Logs
+*.log
+
+# Documentation (optional - uncomment if you want to exclude)
+# docs/
+
+# Build artifacts
+*.egg-info/
+dist/
+build/

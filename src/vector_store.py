@@ -3,14 +3,22 @@ Vector store module for managing embeddings and similarity search.
 Uses ChromaDB for efficient vector storage and retrieval.
 """
 
-import chromadb
-from chromadb.config import Settings
-from sentence_transformers import SentenceTransformer
 from typing import List, Dict, Any, Optional
 import logging
 import os
 from pathlib import Path
 import json
+
+# Optional imports for semantic search
+try:
+    import chromadb
+    from chromadb.config import Settings
+    from sentence_transformers import SentenceTransformer
+    CHROMADB_AVAILABLE = True
+except ImportError:
+    CHROMADB_AVAILABLE = False
+    logger_temp = logging.getLogger(__name__)
+    logger_temp.warning("ChromaDB and/or sentence-transformers not available. Semantic search disabled.")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,6 +41,12 @@ class VectorStore:
             persist_directory: Directory to persist the database
             embedding_model: Model to use for generating embeddings
         """
+        if not CHROMADB_AVAILABLE:
+            logger.warning("Semantic search not available - ChromaDB/sentence-transformers not installed")
+            self.enabled = False
+            return
+
+        self.enabled = True
         self.collection_name = collection_name
         self.persist_directory = persist_directory
         self.embedding_model_name = embedding_model
@@ -67,6 +81,9 @@ class VectorStore:
         Returns:
             List of embedding vectors
         """
+        if not self.enabled:
+            return []
+
         logger.info(f"Generating embeddings for {len(texts)} texts")
         embeddings = []
 
@@ -123,6 +140,9 @@ class VectorStore:
             documents: List of documents with 'text' and 'metadata' keys
             batch_size: Number of documents to add at once
         """
+        if not self.enabled:
+            logger.warning("Semantic search disabled - cannot add documents")
+            return
         logger.info(f"Adding {len(documents)} documents to vector store")
 
         # Extract texts and metadata
@@ -174,6 +194,8 @@ class VectorStore:
         Returns:
             Dictionary containing results
         """
+        if not self.enabled:
+            return {"results": [], "query": query}
         logger.info(f"Searching for: {query}")
 
         # Generate query embedding
@@ -205,6 +227,8 @@ class VectorStore:
         Returns:
             Dictionary of statistics
         """
+        if not self.enabled:
+            return {"count": 0, "enabled": False}
         count = self.collection.count()
 
         return {
