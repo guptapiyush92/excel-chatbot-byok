@@ -91,6 +91,12 @@ async def get_providers():
 async def initialize_ai(request: InitializeAIRequest):
     """Initialize AI provider with API key"""
     try:
+        # Log configuration (without exposing full API key)
+        masked_key = request.api_key[:15] + "..." if len(request.api_key) > 15 else "***"
+        logger.info(f"Initializing {request.provider} with model {request.model}")
+        if request.base_url:
+            logger.info(f"Using custom base URL: {request.base_url}")
+
         # Create LLM client
         llm_client = create_llm_client(
             provider=request.provider,
@@ -105,6 +111,7 @@ async def initialize_ai(request: InitializeAIRequest):
             "llm_client": llm_client,
             "provider": request.provider,
             "model": request.model,
+            "base_url": request.base_url,
             "created_at": time.time(),
             "vector_store": None,
             "dataframes": None,
@@ -124,7 +131,17 @@ async def initialize_ai(request: InitializeAIRequest):
 
     except Exception as e:
         logger.error(f"Error initializing AI: {e}", exc_info=True)
-        raise HTTPException(status_code=400, detail=str(e))
+        error_msg = str(e)
+
+        # Provide more helpful error messages
+        if "404" in error_msg or "Not Found" in error_msg:
+            error_msg = f"404 Not Found - Check your base URL. The endpoint might be incorrect. Error: {error_msg}"
+        elif "401" in error_msg or "Unauthorized" in error_msg:
+            error_msg = f"401 Unauthorized - Check your API key is correct and valid for this proxy. Error: {error_msg}"
+        elif "Connection" in error_msg:
+            error_msg = f"Connection failed - Is your proxy running? Check the base URL. Error: {error_msg}"
+
+        raise HTTPException(status_code=400, detail=error_msg)
 
 @app.post("/api/upload")
 async def upload_files(
@@ -273,7 +290,19 @@ Please provide a clear, helpful answer based on the data."""
 
     except Exception as e:
         logger.error(f"Error querying data: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+
+        # Provide more helpful error messages
+        error_msg = str(e)
+        if "404" in error_msg or "Not Found" in error_msg:
+            base_url = session.get("base_url", "default Anthropic endpoint")
+            error_msg = f"404 Not Found - The proxy endpoint is incorrect. Base URL used: {base_url}. Check your proxy configuration."
+        elif "401" in error_msg or "Unauthorized" in error_msg:
+            error_msg = f"401 Unauthorized - API key authentication failed. Verify your API key is correct."
+        elif "Connection" in error_msg:
+            base_url = session.get("base_url", "Anthropic")
+            error_msg = f"Connection failed to {base_url}. Is your proxy running?"
+
+        raise HTTPException(status_code=500, detail=error_msg)
 
 @app.get("/api/session/{session_id}")
 async def get_session(session_id: str):
