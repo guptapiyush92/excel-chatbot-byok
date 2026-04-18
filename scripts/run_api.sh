@@ -1,38 +1,42 @@
 #!/bin/bash
 
-# Run FastAPI Application
+# Excel Chatbot - FastAPI Version Launcher
+# Runs the corporate-friendly FastAPI application
 
 echo "================================================"
-echo "  Starting Excel Chatbot FastAPI Server"
+echo "  Starting Excel Chatbot (FastAPI)"
 echo "================================================"
 echo ""
 
 # Check if virtual environment exists
-if [ ! -d "venv" ]; then
+if [ ! -d "venv" ] && [ ! -d ".venv" ]; then
     echo "❌ Virtual environment not found!"
-    echo "Please run: bash quick_setup.sh"
+    echo "Please run: bash scripts/quick_setup.sh"
     exit 1
 fi
 
 # Activate virtual environment
-source venv/bin/activate
+if [ -d "venv" ]; then
+    source venv/bin/activate
+elif [ -d ".venv" ]; then
+    source .venv/bin/activate
+fi
 
 # Check if FastAPI is installed
 if ! python -c "import fastapi" &> /dev/null; then
-    echo "📦 Installing FastAPI requirements..."
-    pip install -r requirements-api.txt
+    echo "📦 Installing required dependencies..."
+    pip install -r requirements.txt
 fi
 
 # Set environment variables
 export API_HOST=${API_HOST:-0.0.0.0}
 export API_PORT=${API_PORT:-8000}
 
-echo "🚀 Starting server..."
+echo "🚀 Starting FastAPI server..."
 echo "   URL: http://localhost:${API_PORT}"
 echo ""
 echo "Press Ctrl+C to stop"
 echo ""
 
 # Run with uvicorn
-cd api
-python -m uvicorn main:app --host $API_HOST --port $API_PORT --reload
+python -m uvicorn api.main:app --host $API_HOST --port $API_PORT --reload

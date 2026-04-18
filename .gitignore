@@ -5,8 +5,12 @@ __pycache__/
 *.so
 .Python
 venv/
+.venv/
 env/
 ENV/
+*.egg-info/
+dist/
+build/
 
 # IDE
 .vscode/
@@ -15,20 +19,44 @@ ENV/
 *.swo
 *~
 
-# Project specific
+# OS
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Environment
 .env
+.env.local
+
+# Data & Databases
 chroma_db/
+*.db
+*.sqlite
+
+# Temporary files
 *.log
+*.tmp
+temp/
+tmp/
+
+# Test files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Large data files
+*.xlsx
+*.xls
+*.csv
+DummyData_*
 
 # Excel temp files
 ~$*.xlsx
 ~$*.xls
 
-# OS
-.DS_Store
-Thumbs.db
+# Claude
+.claude/
 
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
+# Old cleanup scripts
+cleanup_project.sh
